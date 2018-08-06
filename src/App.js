@@ -13,7 +13,8 @@ class App extends Component {
       name: "Player 1",
       pile: 0,
       picked: 0,
-    }
+    },
+    computerOpponent: true
   }
 
   //at start, set piles to random numbers
@@ -29,25 +30,63 @@ class App extends Component {
     this.setState({ piles: piles });
   }
 
+
+
   //when nextPlayer button clicked, set up next player (blank obj)
   nextPlayer = () => {
 
     this.setState((prevState) => {
       let currentPlayer = prevState.currentPlayer;
-      if (currentPlayer.picked !==0) {
-      currentPlayer.name === "Player 1" ? currentPlayer = "Player 2" : currentPlayer = "Player 1";
-      const nextPlayer = {
-        name: currentPlayer,
-        pile: 0,
-        picked: 0
+      if (currentPlayer.picked !== 0) {
+        currentPlayer.name === "Player 1" ? currentPlayer = "Player 2" : currentPlayer = "Player 1";
+        const nextPlayer = {
+          name: currentPlayer,
+          pile: 0,
+          picked: 0
+        }
+        if (this.state.computerOpponent && nextPlayer.name === "Player 2") {
+          this.computerOpponent();
+        }
+        return { currentPlayer: nextPlayer };
       }
-      return { currentPlayer: nextPlayer };
-    }
-    else {
-      alert("Please pick at least 1 stick before switching players");
-    }
+      else {
+        alert("Please pick at least 1 stick before switching players");
+      }
     })
   }
+
+  computerOpponent = () => {
+    const piles = this.state.piles;
+    let count = 0;
+    const possibilities = [];
+    let afterChoice = [];
+    //for each pile if # sticks > 0
+    for (let property in piles) {
+      count = piles[property];
+      console.log(property + " = " + count);
+      if (count > 0) {
+        
+        //for each option (1,2,3... if option > pile)
+        for (let i = 1; i < 4; i++) {
+          if (count >= i) {
+            afterChoice.push (count - i);
+            
+          }
+
+        }
+        let name = property;
+        const option = {
+          [name]: afterChoice,
+          player: 1
+        }
+        possibilities.push(option);
+      }
+      }
+     
+  
+       console.log(possibilities);
+  }
+
 
   //when a stick is clicked
   handleStickClick = (e) => {
@@ -118,7 +157,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <br/>
+        <br />
         <button onClick={this.nextPlayer}>next player</button>
         <h3>{this.state.currentPlayer.name}</h3>
 
